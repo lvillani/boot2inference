@@ -1,9 +1,13 @@
 {
   inputs,
   lib,
+  perSystem,
   pkgs,
   ...
 }:
+let
+  llamaModels = perSystem.self.llama-models;
+in
 {
   imports = [
     (inputs.nixpkgs + "/nixos/modules/installer/cd-dvd/iso-image.nix")
@@ -13,6 +17,8 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelParams = [ "quiet" ];
   boot.loader.timeout = lib.mkForce 0;
+
+  environment.systemPackages = [ llamaModels ];
 
   hardware.amdgpu.initrd.enable = true;
 
@@ -30,7 +36,11 @@
   services.llama-cpp.enable = true;
   services.llama-cpp.openFirewall = true;
   services.llama-cpp.package = pkgs.llama-cpp-rocm;
-  services.llama-cpp.settings.host = "0.0.0.0";
+  services.llama-cpp.settings = {
+    host = "0.0.0.0";
+    models-preset = "${llamaModels}/models.ini";
+    no-models-autoload = true;
+  };
 
   system.disableInstallerTools = true;
   system.stateVersion = "26.11";
