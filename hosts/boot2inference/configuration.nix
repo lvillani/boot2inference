@@ -14,6 +14,8 @@
   boot.kernelParams = [ "quiet" ];
   boot.loader.timeout = lib.mkForce 0;
 
+  hardware.amdgpu.initrd.enable = true;
+
   isoImage.makeEfiBootable = true;
   isoImage.squashfsCompression = "zstd -Xcompression-level 3";
 
@@ -27,6 +29,7 @@
 
   services.llama-cpp.enable = true;
   services.llama-cpp.openFirewall = true;
+  services.llama-cpp.package = pkgs.llama-cpp-rocm;
   services.llama-cpp.settings.host = "0.0.0.0";
 
   system.stateVersion = "26.11";
