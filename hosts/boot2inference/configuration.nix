@@ -32,5 +32,6 @@
   services.llama-cpp.package = pkgs.llama-cpp-rocm;
   services.llama-cpp.settings.host = "0.0.0.0";
 
+  system.disableInstallerTools = true;
   system.stateVersion = "26.11";
 }
