@@ -91,13 +91,19 @@ let
   modelsIni = pkgs.writeText "models.ini" ''
     version = 1
 
+    # The model is small enough to not need a quantized KV cache. The 8 full-attention
+    # layers (1 KV head, 512 dim, K and V shared) need 16 KiB of KV cache per token at
+    # f16, so 128K context plus the 1024-token sliding windows of the 40 local layers
+    # cost about 2.4 GiB. Together with 6.7 GiB of weights, mmproj, and MTP draft this
+    # leaves room to spare, so keep the KV cache at lossless f16 for long-context
+    # recall.
     [${gemma12ModelName}]
     model = ${modelFiles}/${gemma12ModelName}/${gemma12ModelName}.gguf
     mmproj = ${modelFiles}/${gemma12ModelName}/mmproj-F16.gguf
     model-draft = ${modelFiles}/${gemma12ModelName}/mtp-gemma-4-12B-it.gguf
-    cache-type-k = q8_0
-    cache-type-v = q8_0
-    ctx-size = 262144
+    cache-type-k = f16
+    cache-type-v = f16
+    ctx-size = 131072
     flash-attn = true
     jinja = true
     min-p = 0
@@ -110,13 +116,13 @@ let
     top-k = 64
     top-p = 0.95
 
-    # 14.6 GiB of weights and 16 GiB of VRAM do not leave room for the vision encoder on
-    # the GPU, so the mmproj stays on the CPU. The 5 full-attention layers need 20 KiB
-    # of KV cache per token, so 128K context needs about 1.4 GiB at q8_0. Keep the KV
-    # cache at q8_0 because q4_0 V hurts long-context recall. n-cpu-moe moves the expert
-    # weights of 4 layers (~0.4 GiB each) to RAM to make room for the KV cache and the
-    # MTP draft. Raise the number if loading runs out of VRAM, lower it if token speed
-    # is too slow.
+    # 13.3 GiB of weights plus the 0.2 GiB MTP draft and 16 GiB of VRAM do not leave
+    # room for the 1.1 GiB vision encoder on the GPU, so the mmproj stays on the CPU.
+    # The 5 full-attention layers need 20 KiB of KV cache per token, so 128K context
+    # needs about 1.4 GiB at q8_0. Keep the KV cache at q8_0 because q4_0 V hurts
+    # long-context recall. n-cpu-moe moves the expert weights of 4 layers (~0.4 GiB
+    # each) to RAM to make room for the KV cache and the MTP draft. Raise the number if
+    # loading runs out of VRAM, lower it if token speed is too slow.
     [${gemma26ModelName}]
     model = ${modelFiles}/${gemma26ModelName}/${gemma26ModelName}.gguf
     mmproj = ${modelFiles}/${gemma26ModelName}/mmproj-F16.gguf
@@ -138,16 +144,23 @@ let
     top-k = 64
     top-p = 0.95
 
+    # 16 of the 64 layers are full attention (4 KV heads, 256 dim); the rest are linear
+    # attention with a constant-size state. The full-attention layers need 64 KiB of KV
+    # cache per token at f16, so 128K context needs about 3.4 GiB with q8_0 keys and
+    # q4_0 values. Together with 9.3 GiB of weights this almost fills 16 GiB of VRAM, so
+    # the 0.9 GiB vision encoder stays on the CPU, as with Gemma 26B A4B. The MTP draft
+    # head is inside the main GGUF (blk.64), so no model-draft file is necessary.
     [${qwenModelName}]
     model = ${modelFiles}/${qwenModelName}/${qwenModelName}.gguf
     mmproj = ${modelFiles}/${qwenModelName}/mmproj-F16.gguf
     cache-type-k = q8_0
     cache-type-v = q4_0
-    ctx-size = 98304
+    ctx-size = 131072
     flash-attn = true
     jinja = true
     min-p = 0
     n-gpu-layers = all
+    no-mmproj-offload = true
     presence-penalty = 0
     repeat-penalty = 1
     spec-draft-n-max = 2
