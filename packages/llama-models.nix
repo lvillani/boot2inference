@@ -2,27 +2,51 @@
 
 let
   #
-  # Gemma
+  # Gemma 4 12B
   #
 
-  gemmaModelName = "gemma-4-12B-it-qat-UD-Q4_K_XL";
+  gemma12ModelName = "gemma-4-12B-it-qat-UD-Q4_K_XL";
 
-  gemmaWeights = pkgs.fetchurl {
-    name = "${gemmaModelName}.gguf";
-    url = "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/980b060c40a8539ac159e0501a3e0f66a6365af3/${gemmaModelName}.gguf";
+  gemma12Weights = pkgs.fetchurl {
+    name = "${gemma12ModelName}.gguf";
+    url = "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/980b060c40a8539ac159e0501a3e0f66a6365af3/${gemma12ModelName}.gguf";
     hash = "sha256-kP1E4p4NfP/rD9ANxzz9q57QsOlTBuz3gh6mNMlAw3A=";
   };
 
-  gemmaMmproj = pkgs.fetchurl {
+  gemma12Mmproj = pkgs.fetchurl {
     name = "mmproj-F16.gguf";
     url = "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/980b060c40a8539ac159e0501a3e0f66a6365af3/mmproj-F16.gguf";
     hash = "sha256-7MTpMSjag2O32/IZPquYzxFCNT9SzqoMlcCHKZeqrdM=";
   };
 
-  gemmaMtp = pkgs.fetchurl {
+  gemma12Mtp = pkgs.fetchurl {
     name = "mtp-gemma-4-12B-it.gguf";
     url = "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/980b060c40a8539ac159e0501a3e0f66a6365af3/mtp-gemma-4-12B-it.gguf";
     hash = "sha256-/LNd6kLHEzPbkEzuEbqsUlye+HKBjuN1P2yxVvPG9PY=";
+  };
+
+  #
+  # Gemma 4 26B A4B
+  #
+
+  gemma26ModelName = "gemma-4-26B-A4B-it-qat-UD-Q4_K_XL";
+
+  gemma26Weights = pkgs.fetchurl {
+    name = "${gemma26ModelName}.gguf";
+    url = "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF/resolve/7b92b5b28818151e8669af2e45e88d6086f490dd/${gemma26ModelName}.gguf";
+    hash = "sha256-p8W8cV9f+OmaPokBzn0rQrQCxmm/JPfFJQdHYz0PWJE=";
+  };
+
+  gemma26Mmproj = pkgs.fetchurl {
+    name = "mmproj-F16.gguf";
+    url = "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF/resolve/7b92b5b28818151e8669af2e45e88d6086f490dd/mmproj-F16.gguf";
+    hash = "sha256-0A8hGn1Pf7Gb2bddjpNC7M/7WSCwj9lWIWdWD9/MXdE=";
+  };
+
+  gemma26Mtp = pkgs.fetchurl {
+    name = "mtp-gemma-4-26B-A4B-it.gguf";
+    url = "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF/resolve/7b92b5b28818151e8669af2e45e88d6086f490dd/mtp-gemma-4-26B-A4B-it.gguf";
+    hash = "sha256-cnLZdZXw1MdL17YjSSt9var9i3xy8ymoJwuk7KaPdoo=";
   };
 
   #
@@ -49,10 +73,15 @@ let
   #
 
   modelFiles = pkgs.runCommand "llama-models-files" { } ''
-    mkdir -p "$out/${gemmaModelName}"
-    ln -s ${gemmaWeights} "$out/${gemmaModelName}/${gemmaModelName}.gguf"
-    ln -s ${gemmaMmproj} "$out/${gemmaModelName}/mmproj-F16.gguf"
-    ln -s ${gemmaMtp} "$out/${gemmaModelName}/mtp-gemma-4-12B-it.gguf"
+    mkdir -p "$out/${gemma12ModelName}"
+    ln -s ${gemma12Weights} "$out/${gemma12ModelName}/${gemma12ModelName}.gguf"
+    ln -s ${gemma12Mmproj} "$out/${gemma12ModelName}/mmproj-F16.gguf"
+    ln -s ${gemma12Mtp} "$out/${gemma12ModelName}/mtp-gemma-4-12B-it.gguf"
+
+    mkdir -p "$out/${gemma26ModelName}"
+    ln -s ${gemma26Weights} "$out/${gemma26ModelName}/${gemma26ModelName}.gguf"
+    ln -s ${gemma26Mmproj} "$out/${gemma26ModelName}/mmproj-F16.gguf"
+    ln -s ${gemma26Mtp} "$out/${gemma26ModelName}/mtp-gemma-4-26B-A4B-it.gguf"
 
     mkdir -p "$out/${qwenModelName}"
     ln -s ${qwenWeights} "$out/${qwenModelName}/${qwenModelName}.gguf"
@@ -62,10 +91,10 @@ let
   modelsIni = pkgs.writeText "models.ini" ''
     version = 1
 
-    [${gemmaModelName}]
-    model = ${modelFiles}/${gemmaModelName}/${gemmaModelName}.gguf
-    mmproj = ${modelFiles}/${gemmaModelName}/mmproj-F16.gguf
-    model-draft = ${modelFiles}/${gemmaModelName}/mtp-gemma-4-12B-it.gguf
+    [${gemma12ModelName}]
+    model = ${modelFiles}/${gemma12ModelName}/${gemma12ModelName}.gguf
+    mmproj = ${modelFiles}/${gemma12ModelName}/mmproj-F16.gguf
+    model-draft = ${modelFiles}/${gemma12ModelName}/mtp-gemma-4-12B-it.gguf
     cache-type-k = q8_0
     cache-type-v = q8_0
     ctx-size = 262144
@@ -73,6 +102,34 @@ let
     jinja = true
     min-p = 0
     n-gpu-layers = all
+    presence-penalty = 0
+    repeat-penalty = 1
+    spec-draft-n-max = 4
+    spec-type = draft-mtp
+    temp = 1.0
+    top-k = 64
+    top-p = 0.95
+
+    # 14.6 GiB of weights and 16 GiB of VRAM do not leave room for the vision encoder on
+    # the GPU, so the mmproj stays on the CPU. The 5 full-attention layers need 20 KiB
+    # of KV cache per token, so 128K context needs about 1.4 GiB at q8_0. Keep the KV
+    # cache at q8_0 because q4_0 V hurts long-context recall. n-cpu-moe moves the expert
+    # weights of 4 layers (~0.4 GiB each) to RAM to make room for the KV cache and the
+    # MTP draft. Raise the number if loading runs out of VRAM, lower it if token speed
+    # is too slow.
+    [${gemma26ModelName}]
+    model = ${modelFiles}/${gemma26ModelName}/${gemma26ModelName}.gguf
+    mmproj = ${modelFiles}/${gemma26ModelName}/mmproj-F16.gguf
+    model-draft = ${modelFiles}/${gemma26ModelName}/mtp-gemma-4-26B-A4B-it.gguf
+    cache-type-k = q8_0
+    cache-type-v = q8_0
+    ctx-size = 131072
+    flash-attn = true
+    jinja = true
+    min-p = 0
+    n-cpu-moe = 4
+    n-gpu-layers = all
+    no-mmproj-offload = true
     presence-penalty = 0
     repeat-penalty = 1
     spec-draft-n-max = 4
@@ -123,8 +180,12 @@ pkgs.linkFarm "llama-models" [
     path = modelsIni;
   }
   {
-    name = gemmaModelName;
-    path = "${modelFiles}/${gemmaModelName}";
+    name = gemma12ModelName;
+    path = "${modelFiles}/${gemma12ModelName}";
+  }
+  {
+    name = gemma26ModelName;
+    path = "${modelFiles}/${gemma26ModelName}";
   }
   {
     name = qwenModelName;
