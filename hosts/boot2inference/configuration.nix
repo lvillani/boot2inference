@@ -21,6 +21,7 @@ in
   environment.systemPackages = [ llamaModels ];
 
   hardware.amdgpu.initrd.enable = true;
+  hardware.enableAllHardware = true;
 
   isoImage.makeEfiBootable = true;
   isoImage.makeUsbBootable = true;
