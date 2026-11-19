@@ -6,6 +6,21 @@ IFS=$'\n\t'
 HERE="$(cd "$(dirname "$0")" && pwd)"
 TOP_LEVEL="$(cd "$HERE/../" && pwd)"
 
+WIFI_ENABLE="${WIFI_ENABLE:-0}"
+WIFI_SSID_REF="${WIFI_SSID_REF:-op://Private/boot2inference-wifi/ssid}"
+WIFI_PSK_REF="${WIFI_PSK_REF:-op://Private/boot2inference-wifi/password}"
+
+if [[ "$WIFI_ENABLE" == "1" ]]; then
+  command -v op >/dev/null || {
+    echo "error: op cli not found (set WIFI_ENABLE=0 to build without wifi)" >&2
+    exit 1
+  }
+
+  WIFI_SSID="$(op read "$WIFI_SSID_REF")"
+  WIFI_PSK="$(op read "$WIFI_PSK_REF")"
+  export WIFI_SSID WIFI_PSK
+fi
+
 cd "$TOP_LEVEL"
 
 nix run .#nom -- build --impure .#nixosConfigurations.boot2inference.config.system.build.isoImage

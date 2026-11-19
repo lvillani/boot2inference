@@ -7,6 +7,9 @@
 }:
 let
   llamaModels = perSystem.self.llama-models;
+
+  wifiSsid = builtins.getEnv "WIFI_SSID";
+  wifiPsk = builtins.getEnv "WIFI_PSK";
 in
 {
   imports = [
@@ -28,6 +31,9 @@ in
   isoImage.squashfsCompression = "zstd -Xcompression-level 3";
 
   networking.hostName = "boot2inference";
+
+  networking.wireless.enable = wifiSsid != "";
+  networking.wireless.networks = lib.optionalAttrs (wifiSsid != "") { "${wifiSsid}".psk = wifiPsk; };
 
   nixpkgs.hostPlatform = "x86_64-linux";
 
