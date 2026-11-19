@@ -48,8 +48,8 @@ in
   services.llama-cpp.package = pkgs.llama-cpp-rocm;
   services.llama-cpp.settings = {
     host = "0.0.0.0";
+    models-max = 1;
     models-preset = "${llamaModels}/models.ini";
-    no-models-autoload = true;
   };
 
   system.disableInstallerTools = true;
