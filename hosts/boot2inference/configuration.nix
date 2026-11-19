@@ -40,6 +40,7 @@ in
   services.avahi.enable = true;
   services.avahi.openFirewall = true;
   services.avahi.settings.publish.disable-publishing = false;
+  services.avahi.settings.publish.publish-addresses = true;
 
   services.getty.autologinUser = "root";
 
