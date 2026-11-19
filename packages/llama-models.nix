@@ -93,17 +93,17 @@ let
 
     # The model is small enough to not need a quantized KV cache. The 8 full-attention
     # layers (1 KV head, 512 dim, K and V shared) need 16 KiB of KV cache per token at
-    # f16, so 128K context plus the 1024-token sliding windows of the 40 local layers
-    # cost about 2.4 GiB. Together with 6.7 GiB of weights, mmproj, and MTP draft this
-    # leaves room to spare, so keep the KV cache at lossless f16 for long-context
-    # recall.
+    # f16, so the full 256K context plus the 1024-token sliding windows of the 40 local
+    # layers cost about 4.3 GiB. Together with 6.7 GiB of weights, mmproj, and MTP draft
+    # this uses about 12.3 GiB and leaves room to spare, so keep the KV cache at
+    # lossless f16 for long-context recall.
     [${gemma12ModelName}]
     model = ${modelFiles}/${gemma12ModelName}/${gemma12ModelName}.gguf
     mmproj = ${modelFiles}/${gemma12ModelName}/mmproj-F16.gguf
     model-draft = ${modelFiles}/${gemma12ModelName}/mtp-gemma-4-12B-it.gguf
     cache-type-k = f16
     cache-type-v = f16
-    ctx-size = 131072
+    ctx-size = 262144
     flash-attn = true
     jinja = true
     min-p = 0
