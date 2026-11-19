@@ -33,6 +33,8 @@ in
   services.avahi.openFirewall = true;
   services.avahi.settings.publish.disable-publishing = false;
 
+  services.getty.autologinUser = "root";
+
   services.llama-cpp.enable = true;
   services.llama-cpp.openFirewall = true;
   services.llama-cpp.package = pkgs.llama-cpp-rocm;
