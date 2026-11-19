@@ -72,7 +72,7 @@ let
     flash-attn = true
     jinja = true
     min-p = 0
-    n-gpu-layers = 999
+    n-gpu-layers = all
     presence-penalty = 0
     repeat-penalty = 1
     spec-draft-n-max = 4
@@ -90,7 +90,7 @@ let
     flash-attn = true
     jinja = true
     min-p = 0
-    n-gpu-layers = 999
+    n-gpu-layers = all
     presence-penalty = 0
     repeat-penalty = 1
     spec-draft-n-max = 2
@@ -107,7 +107,7 @@ let
     flash-attn = true
     jinja = true
     min-p = 0
-    n-gpu-layers = 999
+    n-gpu-layers = all
     presence-penalty = 0
     repeat-penalty = 1
     spec-draft-n-max = 2
