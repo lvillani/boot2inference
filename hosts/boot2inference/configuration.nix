@@ -23,6 +23,7 @@ in
   hardware.amdgpu.initrd.enable = true;
 
   isoImage.makeEfiBootable = true;
+  isoImage.makeUsbBootable = true;
   isoImage.squashfsCompression = "zstd -Xcompression-level 3";
 
   networking.hostName = "boot2inference";
