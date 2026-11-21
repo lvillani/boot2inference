@@ -46,7 +46,7 @@ in
 
   services.llama-cpp.enable = true;
   services.llama-cpp.openFirewall = true;
-  services.llama-cpp.package = pkgs.llama-cpp-rocm;
+  services.llama-cpp.package = pkgs.llama-cpp-vulkan;
   services.llama-cpp.settings = {
     host = "0.0.0.0";
     models-max = 1;
