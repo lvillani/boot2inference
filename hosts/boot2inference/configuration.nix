@@ -25,6 +25,7 @@ in
 
   hardware.amdgpu.initrd.enable = true;
   hardware.enableAllHardware = true;
+  hardware.graphics.enable = true;
 
   isoImage.makeEfiBootable = true;
   isoImage.makeUsbBootable = true;
