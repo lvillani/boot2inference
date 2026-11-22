@@ -2,6 +2,17 @@
   <img src="logo.svg" alt="boot2inference" width="320" />
 </div>
 
+<p align="center">
+  <a href="https://wiki.nixos.org">
+    <img src="https://img.shields.io/badge/NixOS-flake-5271AA?style=for-the-badge" alt="NixOS flake" />
+  </a>
+  <a href="https://github.com/ggml-org/llama.cpp">
+    <img src="https://img.shields.io/badge/llama.cpp-server-16a34a?style=for-the-badge" alt="llama.cpp server" />
+  </a>
+  <img src="https://img.shields.io/badge/self%20hosted-yes-14B8A6?style=for-the-badge" alt="self-hosted" />
+  <img src="https://img.shields.io/badge/cloud-nope%21-6B7280?style=for-the-badge" alt="no cloud" />
+</p>
+
 A specialized NixOS distribution whose only job is to start a [llama.cpp
 server](https://github.com/ggml-org/llama.cpp) and then get out of the way.
 
