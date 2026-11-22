@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+IFS=$'\n\t'
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+TOP="$(cd "$HERE/.." && pwd)"
+
+main() {
+  ISO="$(pick_iso "${1:-}")"
+  DEVICE="$(pick_device "${2:-}")"
+  check_device
+  confirm
+  write_iso
+}
+
+pick_iso() {
+  local iso="${1:-}"
+  if [[ -n $iso ]]; then
+    [[ -f $iso ]] || die "ISO file not found: $iso"
+    printf '%s\n' "$iso"
+    return
+  fi
+
+  local -a isos=()
+  mapfile -t isos < <(find -H "$TOP/result" -maxdepth 2 -type f -name '*.iso' 2>/dev/null | sort)
+  case ${#isos[@]} in
+    0) die "no ISO found in $TOP/result. Run script/build, or pass the ISO path." ;;
+    1) printf '%s\n' "${isos[0]}" ;;
+    *)
+      echo "several ISO files found:" >&2
+      printf '  %s\n' "${isos[@]}" >&2
+      die "pass the ISO path as an argument."
+      ;;
+  esac
+}
+
+pick_device() {
+  local explicit="${1:-}"
+  if [[ -n $explicit ]]; then
+    local real
+    real="$(readlink -f -- "$explicit")" || die "device not found: $explicit"
+    [[ $real == /dev/* ]] || die "$explicit does not point to a /dev path."
+    printf '%s\n' "$real"
+    return
+  fi
+
+  local -a disks=()
+  mapfile -t disks < <(external_disks)
+  local n=${#disks[@]}
+  (( n > 0 )) || die "no external drive found. Plug one in and retry, or pass a device path."
+
+  local choice=1
+  if (( n == 1 )); then
+    echo "external drive found: /dev/${disks[0]} ($(human "$(device_size "${disks[0]}")"))" >&2
+  else
+    echo "external drives:" >&2
+    local i
+    for i in "${!disks[@]}"; do
+      printf '  %d: /dev/%s (%s)\n' $((i + 1)) "${disks[$i]}" "$(human "$(device_size "${disks[$i]}")")" >&2
+    done
+    choice="$(ask "select a drive [1-$n]: ")"
+    [[ $choice =~ ^[0-9]+$ ]] || die "not a number: $choice"
+    (( choice >= 1 && choice <= n )) || die "choice out of range: $choice"
+  fi
+
+  printf '/dev/%s\n' "${disks[$((choice - 1))]}"
+}
+
+check_device() {
+  local name="${DEVICE##*/}"
+  local dev="/dev/$name"
+
+  [[ -b $dev ]] || die "$DEVICE is not a block device."
+
+  local type tran
+  type="$(lsblk -d -n -o TYPE -- "$dev")"
+  tran="$(lsblk -d -n -o TRAN -- "$dev")"
+  [[ $type == disk ]] || die "$dev is not a whole disk (lsblk type: $type)."
+  [[ $tran == usb || $tran == mmc ]] \
+    || die "$dev is not an external drive (transport: ${tran:-unknown})."
+
+  DEVICE_SIZE="$(device_size "$name")"
+  local iso_size
+  iso_size="$(stat -c %s -- "$ISO")"
+  (( iso_size <= DEVICE_SIZE )) \
+    || die "the ISO ($(human "$iso_size")) does not fit on $dev ($(human "$DEVICE_SIZE"))."
+
+  [[ -w $dev ]] || die "$dev is not writable. Run this script as root."
+
+  local mounts
+  if mounts="$(lsblk -n -o MOUNTPOINT -- "$dev" | grep -v '^$')"; then
+    echo "warning: mounted filesystems on $dev will be destroyed:" >&2
+    printf '  %s\n' "$mounts" >&2
+  fi
+}
+
+confirm() {
+  echo >&2
+  echo "about to write $ISO ($(human "$(stat -c %s -- "$ISO")")) to $DEVICE ($(human "$DEVICE_SIZE"))." >&2
+  echo "all data on $DEVICE will be lost." >&2
+  local answer
+  answer="$(ask "type yes to continue: ")"
+  [[ $answer == yes ]] || die "confirmation failed. Nothing was written."
+}
+
+write_iso() {
+  echo "writing $ISO to $DEVICE ..."
+  dd if="$ISO" of="$DEVICE" bs=4M conv=fsync status=progress
+  sync
+  echo "done. The drive is ready to boot."
+}
+
+#
+# Helpers
+#
+
+die() {
+  echo "error: $*" >&2
+  exit 1
+}
+
+external_disks() {
+  local name type tran
+  while IFS=' ' read -r name type tran; do
+    [[ $type == disk && ($tran == usb || $tran == mmc) ]] || continue
+    printf '%s\n' "$name"
+  done < <(lsblk -d -n -o NAME,TYPE,TRAN)
+}
+
+human() {
+  numfmt --to=iec --suffix=B -- "$1"
+}
+
+device_size() {
+  lsblk -d -b -n -o SIZE -- "/dev/$1"
+}
+
+ask() {
+  local prompt="$1" answer
+  [[ -r /dev/tty ]] || die "no terminal available."
+  read -r -p "$prompt" answer </dev/tty
+  printf '%s\n' "$answer"
+}
+
+main "$@"
