@@ -21,7 +21,10 @@ in
   boot.kernelParams = [ "quiet" ];
   boot.loader.timeout = lib.mkForce 0;
 
-  environment.systemPackages = [ llamaModels ];
+  environment.systemPackages = [
+    llamaModels
+    pkgs.llama-cpp-vulkan
+  ];
 
   hardware.amdgpu.initrd.enable = true;
   hardware.enableAllHardware = true;
