@@ -50,6 +50,7 @@ in
   services.llama-cpp.package = pkgs.llama-cpp-vulkan;
   services.llama-cpp.settings = {
     host = "0.0.0.0";
+    metrics = true;
     models-max = 1;
     models-preset = "${llamaModels}/models.ini";
   };
