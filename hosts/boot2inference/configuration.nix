@@ -23,7 +23,9 @@ in
 
   environment.systemPackages = [
     llamaModels
+    pkgs.iw
     pkgs.llama-cpp-vulkan
+    pkgs.wpa_supplicant
   ];
 
   hardware.amdgpu.initrd.enable = true;
