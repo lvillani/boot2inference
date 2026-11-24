@@ -30,5 +30,6 @@ assumes these parts.
 ## Included Models
 
 - [Unsloth Gemma 4 QAT 26B A4B](https://unsloth.ai/docs/models/gemma-4/qat);
+- [Unsloth Inkling 2 Mini](https://unsloth.ai/docs/models/inkling-2-mini);
 - [Unsloth Muse Glimmer 30B](https://unsloth.ai/docs/models/muse-glimmer);
 - [Unsloth Qwen3.8-27B Dynamic V3.1](https://unsloth.ai/docs/models/qwen3.8).

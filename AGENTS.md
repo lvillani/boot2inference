@@ -9,6 +9,7 @@ numtide/blueprint flake. Convention-based:
 
 - `hosts/boot2inference/configuration.nix` — the NixOS config (llama-cpp service, avahi,
   wifi, autologin).
+- `overlays/llama-cpp-vulkan.nix` — builds `llama-cpp-vulkan` from the Unsloth tree.
 - `packages/*.nix` — flake packages. `llama-models.nix` pins model GGUFs and their
   parameters; `nom.nix` wraps nix-output-monitor.
 - `script/` — build and flash entry points.

@@ -6,5 +6,10 @@
     blueprint.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs: inputs.blueprint { inherit inputs; };
+  outputs =
+    inputs:
+    inputs.blueprint {
+      inherit inputs;
+      nixpkgs.overlays = [ (import ./overlays/llama-cpp-vulkan.nix) ];
+    };
 }
