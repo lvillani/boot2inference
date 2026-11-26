@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# Pin the latest build so tools like `nh clean all` keep it.
+#
+# Usage: script/build && script/pin
+
+set -Eeuo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+PROFILE="${PROFILE:-$HOME/.local/state/nix/profiles/boot2inference}"
+
+nix-env --profile "$PROFILE" --set "$(readlink -f "$HERE/../result")"
