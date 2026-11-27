@@ -34,6 +34,24 @@ assumes these parts.
 - [Unsloth Muse Glimmer 30B](https://unsloth.ai/docs/models/muse-glimmer);
 - [Unsloth Qwen3.8-27B Dynamic V3.1](https://unsloth.ai/docs/models/qwen3.8).
 
+## Remote access
+
+The ISO runs an SSH server for the `root` user. It accepts public keys only: password
+and keyboard-interactive authentication are off.
+
+The key comes from 1Password at build time. `script/build` reads the public key from
+`op://Private/boot2inference-ssh/public key` and puts it in
+`users.users.root.openssh.authorizedKeys`. To use another item, set `SSH_PUBKEY_REF`. To
+use a key that is not in 1Password, export `SSH_PUBKEY` with the full key line.
+
+```console
+ssh root@boot2inference.local
+```
+
+The host name resolves over mDNS (avahi). Use the IP address if mDNS does not work. The
+ISO keeps no state, so it generates new host keys on every boot. SSH warns about a
+changed host key after each reboot.
+
 ## Monitoring
 
 The console has tools to inspect the server state:

@@ -8,6 +8,7 @@
 let
   llamaModels = perSystem.self.llama-models;
 
+  sshPubkey = builtins.getEnv "SSH_PUBKEY";
   wifiSsid = builtins.getEnv "WIFI_SSID";
   wifiPsk = builtins.getEnv "WIFI_PSK";
 in
@@ -69,6 +70,16 @@ in
     models-preset = "${llamaModels}/models.ini";
   };
 
+  services.openssh.enable = true;
+  services.openssh.openFirewall = true;
+  services.openssh.settings = {
+    KbdInteractiveAuthentication = false;
+    PasswordAuthentication = false;
+    PermitRootLogin = "prohibit-password";
+  };
+
   system.disableInstallerTools = true;
   system.stateVersion = "26.11";
+
+  users.users.root.openssh.authorizedKeys.keys = lib.optional (sshPubkey != "") sshPubkey;
 }
