@@ -23,8 +23,17 @@ in
 
   environment.systemPackages = [
     llamaModels
+    pkgs.amdgpu_top
+    pkgs.btop
+    pkgs.curl
+    pkgs.htop
     pkgs.iw
+    pkgs.jq
     pkgs.llama-cpp-vulkan
+    pkgs.lm_sensors
+    pkgs.nvtopPackages.amd
+    pkgs.pciutils
+    pkgs.vulkan-tools
     pkgs.wpa_supplicant
   ];
 

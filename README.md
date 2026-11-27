@@ -33,3 +33,22 @@ assumes these parts.
 - [Unsloth Inkling 2 Mini](https://unsloth.ai/docs/models/inkling-2-mini);
 - [Unsloth Muse Glimmer 30B](https://unsloth.ai/docs/models/muse-glimmer);
 - [Unsloth Qwen3.8-27B Dynamic V3.1](https://unsloth.ai/docs/models/qwen3.8).
+
+## Monitoring
+
+The console has tools to inspect the server state:
+
+| Tool         | Shows                                                |
+| ------------ | ---------------------------------------------------- |
+| `htop`       | CPU, memory, and processes                           |
+| `btop`       | CPU, memory, disks, and network, with graphs         |
+| `amdgpu_top` | GPU clocks, temperature, VRAM, and per-process usage |
+| `nvtop`      | GPU usage history and processes                      |
+| `sensors`    | CPU and board temperatures                           |
+| `lspci`      | PCI devices, including the GPU                       |
+| `vulkaninfo` | Vulkan devices, to confirm that RADV works           |
+
+The server reports its state on the HTTP endpoints of llama-server. The web UI
+on port 8080 shows the same information from other machines on the network.
+`curl` and `jq` are installed for the raw endpoints, for example
+`curl -s localhost:8080/models | jq`.
