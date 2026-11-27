@@ -8,9 +8,9 @@
 let
   llamaModels = perSystem.self.llama-models;
 
-  sshPubkey = builtins.getEnv "SSH_PUBKEY";
-  wifiSsid = builtins.getEnv "WIFI_SSID";
-  wifiPsk = builtins.getEnv "WIFI_PSK";
+  sshPubkey = builtins.getEnv "B2I_SSH_PUBKEY";
+  wifiSsid = builtins.getEnv "B2I_WIFI_SSID";
+  wifiPsk = builtins.getEnv "B2I_WIFI_PSK";
 in
 {
   imports = [

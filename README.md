@@ -41,8 +41,9 @@ and keyboard-interactive authentication are off.
 
 The key comes from 1Password at build time. `script/build` reads the public key from
 `op://Private/boot2inference-ssh/public key` and puts it in
-`users.users.root.openssh.authorizedKeys`. To use another item, set `SSH_PUBKEY_REF`. To
-use a key that is not in 1Password, export `SSH_PUBKEY` with the full key line.
+`users.users.root.openssh.authorizedKeys`. To use another item, set `B2I_SSH_PUBKEY_REF`.
+To use a key that is not in 1Password, export `B2I_SSH_PUBKEY` with the full key line.
+All build environment variables use the `B2I_` prefix.
 
 ```console
 ssh root@boot2inference.local

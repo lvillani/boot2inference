@@ -6,27 +6,27 @@ IFS=$'\n\t'
 HERE="$(cd "$(dirname "$0")" && pwd)"
 TOP_LEVEL="$(cd "$HERE/../" && pwd)"
 
-WIFI_ENABLE="${WIFI_ENABLE:-0}"
-WIFI_SSID_REF="${WIFI_SSID_REF:-op://Private/boot2inference-wifi/ssid}"
-WIFI_PSK_REF="${WIFI_PSK_REF:-op://Private/boot2inference-wifi/password}"
-SSH_PUBKEY_REF="${SSH_PUBKEY_REF:-op://Private/boot2inference-ssh/public key}"
+B2I_WIFI_ENABLE="${B2I_WIFI_ENABLE:-0}"
+B2I_WIFI_SSID_REF="${B2I_WIFI_SSID_REF:-op://Private/boot2inference-wifi/ssid}"
+B2I_WIFI_PSK_REF="${B2I_WIFI_PSK_REF:-op://Private/boot2inference-wifi/password}"
+B2I_SSH_PUBKEY_REF="${B2I_SSH_PUBKEY_REF:-op://Private/boot2inference-ssh/public key}"
 
-if [[ "$WIFI_ENABLE" == "1" || -z "${SSH_PUBKEY:-}" ]]; then
+if [[ "$B2I_WIFI_ENABLE" == "1" || -z "${B2I_SSH_PUBKEY:-}" ]]; then
   command -v op >/dev/null || {
-    echo "error: op cli not found (set WIFI_ENABLE=0 and SSH_PUBKEY to build without 1password)" >&2
+    echo "error: op cli not found (set B2I_WIFI_ENABLE=0 and B2I_SSH_PUBKEY to build without 1password)" >&2
     exit 1
   }
 fi
 
-if [[ "$WIFI_ENABLE" == "1" ]]; then
-  WIFI_SSID="$(op read "$WIFI_SSID_REF")"
-  WIFI_PSK="$(op read "$WIFI_PSK_REF")"
-  export WIFI_SSID WIFI_PSK
+if [[ "$B2I_WIFI_ENABLE" == "1" ]]; then
+  B2I_WIFI_SSID="$(op read "$B2I_WIFI_SSID_REF")"
+  B2I_WIFI_PSK="$(op read "$B2I_WIFI_PSK_REF")"
+  export B2I_WIFI_SSID B2I_WIFI_PSK
 fi
 
-if [[ -z "${SSH_PUBKEY:-}" ]]; then
-  SSH_PUBKEY="$(op read "$SSH_PUBKEY_REF")"
-  export SSH_PUBKEY
+if [[ -z "${B2I_SSH_PUBKEY:-}" ]]; then
+  B2I_SSH_PUBKEY="$(op read "$B2I_SSH_PUBKEY_REF")"
+  export B2I_SSH_PUBKEY
 fi
 
 cd "$TOP_LEVEL"

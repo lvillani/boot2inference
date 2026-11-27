@@ -7,6 +7,6 @@
 set -Eeuo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-PROFILE="${PROFILE:-$HOME/.local/state/nix/profiles/boot2inference}"
+B2I_PROFILE="${B2I_PROFILE:-$HOME/.local/state/nix/profiles/boot2inference}"
 
-nix-env --profile "$PROFILE" --set "$(readlink -f "$HERE/../result")"
+nix-env --profile "$B2I_PROFILE" --set "$(readlink -f "$HERE/../result")"
