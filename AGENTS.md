@@ -21,4 +21,8 @@ numtide/blueprint flake. Convention-based:
 - Keep model lists sorted alphabetically, not appended to the end: the model
   section in `README.md`, the models in `packages/llama-models.nix`, and any
   other model list. Insert new models at their sorted position.
+- Keep `configuration.nix` sorted alphabetically: option groups by prefix (`boot.*`,
+  `environment.*`, `services.*`, `system.*`), options inside a group, and `let`
+  bindings. Write one assignment per line, as `services.getty.autologinUser = "root";`.
+  Use an attrset only for `settings`, with sorted keys.
 - Commit messages follow Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`).
