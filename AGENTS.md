@@ -3,6 +3,11 @@
 NixOS flake that builds a boot-only ISO which runs a llama.cpp server on one tuned
 gaming PC (Ryzen 5 3600, RX 9070 16 GB). Details in `README.md`.
 
+## Builds
+
+The user runs builds. Agents edit, inspect, and check the source files, then give the
+user the command to run (`script/build`, `nix build .#...`).
+
 ## Layout
 
 numtide/blueprint flake. Convention-based:
